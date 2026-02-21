@@ -1,6 +1,6 @@
 {
   "name": "ted-crew",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "AI mesh network MCP server — Claude, Gemini, Codex as crew",
   "type": "module",
   "bin": {
