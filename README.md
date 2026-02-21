@@ -11,41 +11,26 @@ Claude ──┤                         ├── ask_claude ──→ Claude
                              └── ask_codex ──→ Codex
 ```
 
+## 사전 요구사항
+
+- [Claude Code](https://claude.ai/code) CLI
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+- [Codex CLI](https://github.com/openai/codex)
+
 ## 설치
 
-```bash
-cd ~/.claude/mcp-servers/ted-crew
-npm install
-npm run build
-```
-
-## 설정
-
-환경변수 `TED_CREW_PROVIDER`로 호출자를 지정합니다.
-서버는 자기 자신에 해당하는 도구를 자동으로 숨겨 무한 루프를 방지합니다.
-
-| Provider | 숨김 | 노출 도구 |
-|----------|------|----------|
-| `claude` (기본) | `ask_claude` | `ask_gemini`, `ask_codex`, jobs |
-| `gemini` | `ask_gemini` | `ask_codex`, `ask_claude`, jobs |
-| `codex` | `ask_codex` | `ask_gemini`, `ask_claude`, jobs |
-
-### Claude Code (`~/.claude.json`)
+### Claude Code (`~/.claude/settings.json`)
 
 ```json
 {
   "mcpServers": {
     "ted-crew": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["~/.claude/mcp-servers/ted-crew/dist/server.cjs"],
-      "env": {}
+      "command": "npx",
+      "args": ["-y", "ted-crew"]
     }
   }
 }
 ```
-
-`TED_CREW_PROVIDER`를 생략하면 기본값 `claude`가 적용됩니다.
 
 ### Gemini CLI (`~/.gemini/settings.json`)
 
@@ -53,8 +38,8 @@ npm run build
 {
   "mcpServers": {
     "ted-crew": {
-      "command": "node",
-      "args": ["~/.claude/mcp-servers/ted-crew/dist/server.cjs"],
+      "command": "npx",
+      "args": ["-y", "ted-crew"],
       "env": { "TED_CREW_PROVIDER": "gemini" },
       "trust": true
     }
@@ -66,8 +51,8 @@ npm run build
 
 ```toml
 [mcp_servers.ted-crew]
-command = "node"
-args = ["~/.claude/mcp-servers/ted-crew/dist/server.cjs"]
+command = "npx"
+args = ["-y", "ted-crew"]
 env = { "TED_CREW_PROVIDER" = "codex" }
 ```
 
@@ -77,14 +62,12 @@ env = { "TED_CREW_PROVIDER" = "codex" }
 {
   "mcpServers": {
     "ted-crew": {
-      "command": "node",
-      "args": ["/absolute/path/to/.claude/mcp-servers/ted-crew/dist/server.cjs"]
+      "command": "npx",
+      "args": ["-y", "ted-crew"]
     }
   }
 }
 ```
-
-프로젝트별 설정은 `{project}/.cursor/mcp.json`에 동일한 형식으로 작성합니다.
 
 ### Windsurf (`~/.codeium/windsurf/mcp_config.json`)
 
@@ -92,56 +75,39 @@ env = { "TED_CREW_PROVIDER" = "codex" }
 {
   "mcpServers": {
     "ted-crew": {
-      "command": "node",
-      "args": ["/absolute/path/to/.claude/mcp-servers/ted-crew/dist/server.cjs"],
+      "command": "npx",
+      "args": ["-y", "ted-crew"],
       "disabled": false
     }
   }
 }
 ```
 
-### Cline (VS Code 확장)
-
-Settings > Cline > MCP Servers > Edit Config (`cline_mcp_settings.json`):
+### Cline / VS Code Copilot
 
 ```json
 {
   "mcpServers": {
     "ted-crew": {
-      "command": "node",
-      "args": ["/absolute/path/to/.claude/mcp-servers/ted-crew/dist/server.cjs"],
-      "disabled": false
+      "command": "npx",
+      "args": ["-y", "ted-crew"]
     }
   }
 }
 ```
 
-### VS Code Copilot (`.vscode/mcp.json`)
+## Provider 설정
 
-```json
-{
-  "servers": {
-    "ted-crew": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/absolute/path/to/.claude/mcp-servers/ted-crew/dist/server.cjs"]
-    }
-  }
-}
-```
+환경변수 `TED_CREW_PROVIDER`로 호출자를 지정합니다.
+서버는 자기 자신에 해당하는 도구를 자동으로 숨겨 무한 루프를 방지합니다.
 
-사용자별 전역 설정은 VS Code Settings (`settings.json`)의 `mcp.servers`에 동일한 형식으로 작성합니다.
+| Provider | 숨김 | 노출 도구 |
+|----------|------|----------|
+| `claude` (기본) | `ask_claude` | `ask_gemini`, `ask_codex`, jobs |
+| `gemini` | `ask_gemini` | `ask_codex`, `ask_claude`, jobs |
+| `codex` | `ask_codex` | `ask_gemini`, `ask_claude`, jobs |
 
-### 경로 참고
-
-- `~` 틸드 확장은 Claude Code, Gemini CLI에서만 지원됩니다.
-- Cursor, Windsurf, Cline, VS Code 등 IDE 기반 클라이언트에서는 **절대 경로**를 사용하세요.
-- Windows: `C:/Users/<username>/.claude/mcp-servers/ted-crew/dist/server.cjs`
-- macOS/Linux: `/home/<username>/.claude/mcp-servers/ted-crew/dist/server.cjs`
-
-### TED_CREW_PROVIDER 참고
-
-IDE 기반 에이전트(Cursor, Windsurf, Cline 등)는 `TED_CREW_PROVIDER`를 설정하지 않으면 기본값 `claude`가 적용되어 `ask_gemini`, `ask_codex`, Job 관리 도구가 노출됩니다. 대부분의 경우 이 기본 설정으로 충분합니다.
+IDE 기반 클라이언트(Cursor, Windsurf, Cline 등)는 `TED_CREW_PROVIDER` 없이 기본값 `claude`로 사용하면 됩니다.
 
 ## 사용 시나리오
 
@@ -151,7 +117,7 @@ IDE 기반 에이전트(Cursor, Windsurf, Cline 등)는 `TED_CREW_PROVIDER`를 �
 
 ```
 ask_gemini(prompt: "아키텍처 관점에서 리뷰해줘", files: [...], background: true)
-ask_codex(prompt: "코드 품질/버그 관점에서 리뷰해줘", profile: "oracle", background: true)
+ask_codex(prompt: "코드 품질/버그 관점에서 리뷰해줘", model: "gpt-5.3-codex", reasoning_effort: "high", background: true)
 → wait_job으로 둘 다 완료 대기 → 결과 종합
 ```
 
@@ -160,17 +126,17 @@ ask_codex(prompt: "코드 품질/버그 관점에서 리뷰해줘", profile: "or
 Gemini 1M 토큰으로 전체 구조 파악 후 Codex가 실행:
 
 ```
-ask_gemini(prompt: "X 기능 어디 손대야 해?", directories: ["./src"])
+ask_gemini(prompt: "X 기능 어디 손대야 해?", directories: ["./src"], model: "gemini-2.5-pro")
 → 분석 결과 받아서
-ask_codex(prompt: "분석 결과대로 수정해줘", profile: "fixer", writable: true)
+ask_codex(prompt: "분석 결과대로 수정해줘", model: "gpt-5.3-codex", reasoning_effort: "high", writable: true)
 ```
 
-### 3. 막혔을 때 오라클 상담
+### 3. 다른 관점 의견 구하기
 
-같은 문제를 다른 모델이 다른 각도로 분석. 에코챔버 탈출:
+같은 문제를 다른 모델이 다른 각도로 분석:
 
 ```
-ask_codex(prompt: "이 에러 왜 나는지 분석해줘 [에러 내용]", profile: "oracle")
+ask_codex(prompt: "이 에러 왜 나는지 분석해줘 [에러 내용]", model: "gpt-5.3-codex", reasoning_effort: "xhigh")
 ```
 
 ### 4. 문서 생성 파이프라인
@@ -184,10 +150,10 @@ ask_gemini(prompt: "이 코드 읽고 README 초안 써줘", files: ["./src/inde
 
 ### 5. 리서치 → 구현
 
-Claude 컨텍스트 아끼면서 리서치 아웃소싱:
+Claude 컨텍스트를 아끼면서 리서치 아웃소싱:
 
 ```
-ask_gemini(prompt: "React Query v5 staleTime vs gcTime 차이 정리해줘")
+ask_gemini(prompt: "React Query v5 staleTime vs gcTime 차이 정리해줘", model: "gemini-2.5-pro")
 → 결과 받아서 Claude가 실제 코드에 적용
 ```
 
@@ -196,7 +162,7 @@ ask_gemini(prompt: "React Query v5 staleTime vs gcTime 차이 정리해줘")
 | AI | 강점 |
 |----|------|
 | **Gemini** | 대규모 컨텍스트 분석(1M 토큰), 작문, 리서치 |
-| **Codex** | 코드 실행/수정, 빌드/테스트, 프로필 기반 reasoning |
+| **Codex** | 코드 실행/수정, 빌드/테스트, reasoning_effort 조절 |
 | **Claude** | 오케스트레이터, 대화 맥락 유지, 최종 판단 |
 
 ---
@@ -232,7 +198,7 @@ Codex CLI로 작업을 위임합니다. `model`과 `reasoning_effort`로 동작�
 | `working_directory` | string | | 작업 디렉토리 |
 | `background` | boolean | | 백그라운드 실행 |
 | `writable` | boolean | | 파일 수정 허용 |
-| `timeout_ms` | number | | 포그라운드 타임아웃 (ms). 느린 모델 사용 시 늘릴 것 (기본: 300,000) |
+| `timeout_ms` | number | | 포그라운드 타임아웃 ms (기본: 300,000) |
 
 ### `ask_claude`
 
@@ -267,28 +233,20 @@ Claude Code CLI로 작업을 위임합니다. 코드 생성, 디버깅, 리팩�
 | `TED_CREW_MAX_STDOUT` | `10485760` | stdout 수집 상한 (10MB) |
 | `TED_CREW_TIMEOUT` | `300000` | 포그라운드 기본 타임아웃 (5분) |
 
-## 프로젝트 구조
+## 응답 자동 저장
 
-```
-src/
-├── index.ts                 # MCP 서버 엔트리, 도구 필터링
-├── lib/
-│   ├── constants.ts         # 공유 상수 (MAX_STDOUT, MAX_STDERR 등)
-│   ├── exchange.ts          # 응답 후처리 (파일 저장)
-│   ├── parser.ts            # CLI 출력 파싱, 에러 감지
-│   ├── prompt-builder.ts    # 공통 프롬프트 가공 함수
-│   ├── spawner.ts           # CLI 프로세스 스폰 (포그라운드/백그라운드)
-│   └── types.ts             # TypeScript 타입 정의
-└── tools/
-    ├── ask-claude.ts        # Claude Code CLI 호출
-    ├── ask-codex.ts         # Codex CLI 호출
-    ├── ask-gemini.ts        # Gemini CLI 호출
-    └── jobs.ts              # 백그라운드 Job 관리 + GC
-```
+응답이 500자를 초과하면 `.aidocs/ted-crew/{provider}-{날짜}-{시간}.md`에 자동 저장되고 요약만 반환됩니다.
+`working_directory`를 지정하면 해당 프로젝트 아래에 저장됩니다.
 
 ## 스킬 설치
 
 각 AI 클라이언트에 라우팅 가이드 스킬을 설치합니다.
+
+```bash
+npx ted-crew install-skills
+```
+
+또는 소스에서:
 
 ```bash
 npm run install-skills
@@ -302,12 +260,33 @@ npm run install-skills
 | Gemini CLI | `~/.gemini/skills/ted-crew/` |
 | Codex CLI | `~/.codex/skills/ted-crew/` |
 
-스킬은 `skills/` 디렉토리에 있으며, 각 AI가 ted-crew MCP 도구를 언제/어떻게 쓸지 라우팅 가이드를 제공합니다.
-설치 후 각 클라이언트를 재시작하면 활성화됩니다.
+## 프로젝트 구조
+
+```
+src/
+├── index.ts                 # MCP 서버 엔트리, 도구 필터링
+├── lib/
+│   ├── constants.ts         # 공유 상수
+│   ├── exchange.ts          # 응답 후처리 (파일 저장)
+│   ├── parser.ts            # CLI 출력 파싱, 에러 감지
+│   ├── prompt-builder.ts    # 프롬프트 가공
+│   ├── spawner.ts           # CLI 프로세스 스폰
+│   └── types.ts             # TypeScript 타입 정의
+└── tools/
+    ├── ask-claude.ts        # Claude Code CLI 호출
+    ├── ask-codex.ts         # Codex CLI 호출
+    ├── ask-gemini.ts        # Gemini CLI 호출
+    └── jobs.ts              # 백그라운드 Job 관리
+```
 
 ## 빌드
 
 ```bash
-npm run build    # esbuild → dist/server.cjs (단일 번들)
+npm install
+npm run build    # esbuild → dist/server.cjs
 npm run dev      # watch 모드
 ```
+
+## 라이선스
+
+MIT
