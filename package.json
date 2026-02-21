@@ -1,0 +1,41 @@
+{
+  "name": "ted-crew",
+  "version": "1.2.0",
+  "description": "AI mesh network MCP server — Claude, Gemini, Codex as crew",
+  "type": "module",
+  "bin": {
+    "ted-crew": "./dist/server.cjs"
+  },
+  "files": [
+    "dist/",
+    "skills/"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --watch",
+    "install-skills": "node scripts/install-skills.js",
+    "prepublishOnly": "node build.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "gemini",
+    "codex",
+    "ai",
+    "crew",
+    "model-context-protocol"
+  ],
+  "author": "dungan24",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "esbuild": "^0.25.0",
+    "@types/node": "^22.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
